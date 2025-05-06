@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Create Parlay</title>
+  <style>
+    /* Top heading style */
+    h1 {
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    /* Container for the nav links at the top */
+    .nav-links {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* Style each link as a "button" */
+    .nav-links a {
+      display: inline-block;
+      background-color: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      margin: 4px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .nav-links a:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Form styling */
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+      transition: background-color 0.2s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    /* Prop selection styling */
+    .prop-selection {
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      background: #f5f5f5;
+    }
+
+    .search-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .search-filters select {
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .props-container {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px;
+      background: white;
+    }
+    
+    .prop-item {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+    
+    .prop-item:hover {
+      background-color: #f9f9f9;
+    }
+    
+    .prop-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    
+    .selected-props {
+      margin-top: 15px;
+      padding: 10px;
+      background: #e8f5e9;
+      border-radius: 4px;
+    }
+    
+    .selected-props ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .selected-props li {
+      padding: 5px;
+      margin: 5px 0;
+      background: white;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .remove-prop {
+      color: #f44336;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-weight: bold;
+    }
+    
+    /* No results message */
+    .no-props {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+  <script>
+    // Will run after page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the props filter
+      setupPropFilters();
+      
+      // Setup event listeners for checkboxes to update selected props display
+      document.querySelectorAll('.prop-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedProps);
+      });
+      
+      // Initial run of updateSelectedProps to properly initialize the UI
+      updateSelectedProps();
+      
+      // Log the number of props found to verify data is loaded
+      console.log("Total props found:", document.querySelectorAll('.prop-item').length);
+    });
+    
+    function setupPropFilters() {
+      const playerFilter = document.getElementById('player-filter');
+      const statTypeFilter = document.getElementById('stat-type-filter');
+      
+      playerFilter.addEventListener('change', filterProps);
+      statTypeFilter.addEventListener('change', filterProps);
+      
+      // Debug - log available players
+      console.log("Available players in filter:", playerFilter.options.length - 1); // -1 for the "All Players" option
+    }
+    
+    function filterProps() {
+      const playerFilter = document.getElementById('player-filter').value;
+      const statTypeFilter = document.getElementById('stat-type-filter').value;
+      
+      console.log("Filtering by player:", playerFilter);
+      console.log("Filtering by stat type:", statTypeFilter);
+      
+      let visibleCount = 0;
+      
+      document.querySelectorAll('.prop-item').forEach(item => {
+        // Get data attributes from the HTML element
+        const playerValue = item.getAttribute('data-player');
+        const statTypeValue = item.getAttribute('data-stat-type');
+        
+        console.log(`Comparing prop: player=${playerValue}, stat=${statTypeValue}`);
+        
+        // Do the comparison with strict equality
+        const playerMatch = playerFilter === 'all' || playerValue === playerFilter;
+        const statTypeMatch = statTypeFilter === 'all' || statTypeValue === statTypeFilter;
+        
+        if (playerMatch && statTypeMatch) {
+          item.style.display = '';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Show "no results" message if needed
+      const noPropsMsg = document.getElementById('no-props-message');
+      if (visibleCount === 0) {
+        if (!noPropsMsg) {
+          const msg = document.createElement('div');
+          msg.id = 'no-props-message';
+          msg.className = 'no-props';
+          msg.textContent = 'No props match the selected filters';
+          
+          const container = document.querySelector('.props-container');
+          container.appendChild(msg);
+        }
+      } else if (noPropsMsg) {
+        noPropsMsg.remove();
+      }
+      
+      console.log(`Filter results: ${visibleCount} props match criteria`);
+    }
+    
+    function updateSelectedProps() {
+      const selectedList = document.getElementById('selected-props-list');
+      selectedList.innerHTML = '';
+      
+      const checkboxes = document.querySelectorAll('.prop-checkbox:checked');
+      
+      if (checkboxes.length === 0) {
+        document.getElementById('selected-props-container').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('selected-props-container').style.display = 'block';
+      
+      checkboxes.forEach(checkbox => {
+        const propLabel = checkbox.nextElementSibling.textContent;
+        const propId = checkbox.value;
+        
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${propLabel}</span>
+          <button type="button" class="remove-prop" onclick="removeProp('${propId}')">✕</button>
+        `;
+        selectedList.appendChild(li);
+      });
+    }
+    
+    function removeProp(propId) {
+      const checkbox = document.getElementById('prop' + propId);
+      if (checkbox) {
+        checkbox.checked = false;
+        updateSelectedProps();
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <h1>Create New Parlay</h1>
+
+  <!-- Navigation links -->
+  <div class="nav-links">
+    <a href="/">View All Parlays</a>
+    <a href="/create_prop">+ Add New Prop</a>
+    <a href="/create_player">+ Add Player</a>
+    <a href="/select_parlay_to_update">✏️ Edit a Parlay</a>
+  </div>
+
+  <form method="POST">
+    <label>Date:</label>
+    <input type="text" name="date" placeholder="YYYY-MM-DD">
+
+    <label>Wager Amount:</label>
+    <input type="number" name="wager_amount" step="0.01">
+
+    <label>Payout:</label>
+    <input type="number" name="payout" step="0.01">
+
+    <label>Result:</label>
+    <select name="result">
+      <option value="pending">Pending</option>
+      <option value="win">Win</option>
+      <option value="loss">Loss</option>
+    </select>
+
+    <label>Choose Props (Legs):</label>
+    <div class="prop-selection">
+      <div class="search-filters">
+        <select id="player-filter">
+          <option value="all">All Players</option>
+          {% for player in players %}
+            <option value="{{ player.id }}">{{ player.name }}</option>
+          {% endfor %}
+        </select>
+        
+        <select id="stat-type-filter">
+          <option value="all">All Stat Types</option>
+          <option value="points">Points</option>
+          <option value="rebounds">Rebounds</option>
+          <option value="assists">Assists</option>
+          <option value="steals">Steals</option>
+          <option value="blocks">Blocks</option>
+          <option value="p+r+a">P + R + A</option>
+          <option value="p+r">P + R</option>
+          <option value="p+a">P + A</option>
+          <option value="r+a">R + A</option>
+          <option value="s+b">S + B</option>
+        </select>
+      </div>
+
+      <div class="props-container">
+        {% if props %}
+          {% for prop in props %}
+            <div class="prop-item" data-player="{{ prop.player_id }}" data-stat-type="{{ prop.stat_type }}">
+              <input type="checkbox" name="props" value="{{ prop.id }}" id="prop{{ prop.id }}" class="prop-checkbox">
+              <label for="prop{{ prop.id }}">{{ prop.player.name }} – {{ prop.stat_type }} {{ prop.over_under }} {{ prop.line }}</label>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-props">No props available. Add some props first.</div>
+        {% endif %}
+      </div>
+
+      <div class="selected-props" id="selected-props-container" style="display: none;">
+        <h4>Selected Props:</h4>
+        <ul id="selected-props-list"></ul>
+      </div>
+    </div>
+
+    <input type="submit" value="Create Parlay">
+  </form>
+
+</body>
+</html>

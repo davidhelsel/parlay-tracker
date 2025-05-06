@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Select Player</title></head>
+<body>
+  <h1>Select a Player</h1>
+  <ul>
+    {% for p in players %}
+      <li><a href="/report/player/{{ p.id }}">{{ p.name }}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="/">← Back to Home</a>
+</body></html>

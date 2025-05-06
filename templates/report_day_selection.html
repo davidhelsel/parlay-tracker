@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Select Day</title></head>
+<body>
+  <h1>Select a Day</h1>
+  <ul>
+    {% for d in dates %}
+      <li><a href="/report/day/{{ d }}">{{ d }}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="/">← Back to Home</a>
+</body></html>

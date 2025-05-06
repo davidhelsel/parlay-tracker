@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Player Report - LeBron James</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem;
+      background-color: #333;
+      color: white;
+    }
+
+    .container {
+      max-width: 800px;  /* controls the overall width of the report */
+      margin: 2rem auto;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .chart-section {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .chart-section h2 {
+      margin-bottom: 1rem;
+    }
+
+    /* Simple line chart styling for the <svg> */
+    svg {
+      border: 1px solid #ccc;
+      background: #fafafa;
+    }
+    /* Make circles stand out */
+    circle {
+      fill: #007bff;
+      stroke: #0056b3;
+      stroke-width: 1;
+    }
+    /* The line connecting points */
+    path {
+      stroke: #007bff;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .stats-section {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      text-align: center;
+    }
+    .stat-card {
+      border: 1px solid #eee;
+      border-radius: 5px;
+      padding: 1rem;
+      background-color: #fefefe;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .stat-card h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      color: #555;
+    }
+    .stat-card p {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>LeBron James - Player Report</h1>
+  </header>
+
+  <div class="container">
+    <div class="chart-section">
+      <h2>Earnings Over Time</h2>
+      <!-- A simple placeholder line chart using inline <svg> with 5 data points -->
+      <svg width="600" height="300" viewBox="0 0 600 300">
+        <!-- X-axis -->
+        <line x1="50" y1="250" x2="550" y2="250" stroke="#bbb" stroke-width="2" />
+        <!-- Y-axis -->
+        <line x1="50" y1="50" x2="50" y2="250" stroke="#bbb" stroke-width="2" />
+
+        <!-- Fake axis labels -->
+        <text x="45" y="265" font-size="12">0</text>
+        <text x="538" y="265" font-size="12">Time →</text>
+        <text x="10" y="255" font-size="12" transform="rotate(-90 10,255)">Earnings ($)</text>
+
+        <!-- Here's a dummy line with 5 points -->
+        <!-- Data (X, Y) roughly scaled for a 500x200 area inside (50,50) to (550,250) -->
+        <path d="M 50 220 L 150 180 L 250 200 L 350 130 L 450 150 L 550 100" />
+
+        <!-- Markers for each data point -->
+        <circle cx="50"  cy="220" r="4" />
+        <circle cx="150" cy="180" r="4" />
+        <circle cx="250" cy="200" r="4" />
+        <circle cx="350" cy="130" r="4" />
+        <circle cx="450" cy="150" r="4" />
+        <circle cx="550" cy="100" r="4" />
+      </svg>
+    </div>
+
+    <div class="stats-section">
+      <div class="stat-card">
+        <h3>ROI</h3>
+        <p>+25%</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Money Earned</h3>
+        <p>$350</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Legs Used</h3>
+        <p>12</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Parlays Used</h3>
+        <p>5</p>
+      </div>
+      <div class="stat-card">
+        <h3>Most Winning Bet</h3>
+        <p>Over 25.5 points</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

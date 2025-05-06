@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Day Report</title>
+  <style>
+    h1 { text-align: center; margin: 1rem 0; }
+    .nav-links { text-align: center; margin-bottom: 1rem; }
+    .nav-links a { display: inline-block; background: #f0f0f0; color: #333; text-decoration: none; padding: 8px 14px; border-radius: 8px; margin: 4px; border: 1px solid #ccc; font-weight: bold; transition: background 0.2s; }
+    .nav-links a:hover { background: #e0e0e0; }
+    .report-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    .block-row { display: flex; gap: 20px; margin-bottom: 2rem; }
+    .stat-block {
+      flex: 1;
+      background: #f9f9f9;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 24px 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-block.positive { background: #eafbe7; border-color: #b7e4c7; }
+    .stat-block.negative { background: #fbeaea; border-color: #f5b7b7; }
+    .stat-block h3 { margin-bottom: 0.5rem; font-size: 1.1rem; color: #555; }
+    .stat-block .stat-value { font-size: 2rem; font-weight: bold; color: #222; }
+    .parlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .parlay-card {
+      border: 2px solid black;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+    /* Optional: create classes for colored backgrounds */
+    .parlay-win {
+      background-color: lightgreen;
+    }
+    .parlay-loss {
+      background-color: lightcoral;
+    }
+    .parlay-pending {
+      background-color: lightyellow;
+    }
+    .parlay-default {
+      background-color: lightgray;
+    }
+  </style>
+</head>
+<body>
+  <h1>Report for {{ date }}</h1>
+  <div class="nav-links">
+    <a href="/">View All Parlays</a>
+    <a href="/report">Back to Reports</a>
+    <a href="/create_parlay">+ New Parlay</a>
+  </div>
+  <div class="report-container">
+    <!-- First row -->
+    <div class="block-row">
+      <div class="stat-block">
+        <h3>Total Wagered</h3>
+        <div class="stat-value">${{ "%.2f"|format(total_wagered) }}</div>
+      </div>
+      <div class="stat-block">
+        <h3>Total Won</h3>
+        <div class="stat-value">${{ "%.2f"|format(total_won) }}</div>
+      </div>
+      <div class="stat-block {% if net_earning >= 0 %}positive{% else %}negative{% endif %}">
+        <h3>Net Earning</h3>
+        <div class="stat-value">${{ "%.2f"|format(net_earning) }}</div>
+      </div>
+    </div>
+    <!-- Second row -->
+    <div class="block-row">
+      <div class="stat-block">
+        <h3>Total Parlays Placed</h3>
+        <div class="stat-value">{{ total_parlays }}</div>
+      </div>
+      <div class="stat-block">
+        <h3>% Parlays Won</h3>
+        <div class="stat-value">{{ "%.1f"|format(percent_winners) }}%</div>
+      </div>
+      <div class="stat-block">
+        <h3>Best Parlay</h3>
+        {% if best_parlay %}
+          <div class="stat-value">${{ "%.2f"|format(best_parlay.payout) }}</div>
+        {% else %}
+          <div class="stat-value">No winning parlays</div>
+        {% endif %}
+      </div>
+    </div>
+    <!-- Third row -->
+    <div class="block-row">
+      <div class="stat-block">
+        <h3>Highest Earning Player</h3>
+        <div class="stat-value">
+          {% if highest_player %}{{ highest_player.name }}{% else %}N/A{% endif %}
+        </div>
+      </div>
+      <div class="stat-block">
+        <h3>ROI</h3>
+        <div class="stat-value">
+          {% if highest_player and highest_player.total_wagered > 0 %}
+            {{ "%.2f"|format((highest_player.net_earning / highest_player.total_wagered) * 100) }}%
+          {% else %}
+            N/A
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="parlay-grid" style="margin-top: 2rem;">
+      {% if parlays and parlays|length > 0 %}
+        {% for parlay in parlays %}
+          <div class="parlay-card
+            {% if parlay.result == 'win' %}
+              parlay-win
+            {% elif parlay.result == 'loss' %}
+              parlay-loss
+            {% elif parlay.result == 'pending' %}
+              parlay-pending
+            {% else %}
+              parlay-default
+            {% endif %}
+          ">
+            <div><strong>Date:</strong> {{ parlay.date }}</div>
+            <div><strong>Wager:</strong> ${{ "%.2f"|format(parlay.wager_amount) }}</div>
+            <div><strong>Payout:</strong> ${{ "%.2f"|format(parlay.payout) }}</div>
+            <div><strong>Result:</strong> {{ parlay.result }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center; width:100%;">No parlays found.</div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

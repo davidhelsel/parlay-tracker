@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Parlays</title>
+  <style>
+    /* Top heading style */
+    h1 {
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    /* Container for the nav links at the top */
+    .nav-links {
+      text-align: center;  /* center them horizontally */
+      margin-bottom: 1rem;
+    }
+
+    /* Style each link as a "button" */
+    .nav-links a {
+      display: inline-block;
+      background-color: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      margin: 4px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .nav-links a:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Create a responsive grid for the parlay cards */
+    .parlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;   /* so it doesn't span entire page width */
+      margin: 0 auto;      /* center the grid in the page */
+      padding: 0 20px;
+    }
+
+    /* The parlay card styling */
+    .parlay-card {
+      border: 2px solid black;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    /* The button group at bottom of each card */
+    .button-group {
+      display: inline-flex;    /* place forms side by side */
+      gap: 10px;               /* spacing between buttons */
+      margin-top: 1rem;
+    }
+
+    /* Style for the form buttons (delete, edit) */
+    .button-group button {
+      background-color: #eee;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .button-group button:hover {
+      background-color: #ddd;
+    }
+
+    /* Small styling for the list items (legs) */
+    ul {
+      list-style: disc;
+      margin: 8px auto;    /* Added top margin to create space */
+      padding-left: 20px;  /* Ensure there's enough indent for bullets */
+      display: block;      /* Changed from inline-block to block */
+      text-align: left;    /* keep text left-aligned */
+      width: 90%;          /* Control the width of the list */
+    }
+    
+    /* Added a container div for the legs section */
+    .legs-section {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Make list items have proper spacing */
+    li {
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Parlays</h1>
+
+  <!-- Navigation links (like a mini navbar) -->
+  <div class="nav-links">
+    <a href="/create_parlay">+ Create New Parlay</a>
+    <a href="/create_prop">+ Add New Prop</a>
+    <a href="/create_player">+ Add Player</a>
+    <a href="/select_parlay_to_update">✏️ Edit a Parlay</a>
+    <a href="/report" style="background:#f0f0f0;border:1px solid #ccc;padding:8px 14px;border-radius:8px;margin-left:10px;cursor:pointer;">
+      📊 Report
+    </a>
+  </div>
+
+  <!-- The grid container for all parlay cards -->
+  <div class="parlay-grid">
+    {% for parlay in parlays %}
+      <div class="parlay-card"
+           style="background-color:
+             {% if parlay.result == 'win' %}lightgreen
+             {% elif parlay.result == 'loss' %}lightcoral
+             {% elif parlay.result == 'pending' %}lightyellow
+             {% else %}lightgray
+             {% endif %}
+      ">
+        <strong>Date:</strong> {{ parlay.date }}<br>
+        <strong>Buy-in:</strong> ${{ parlay.wager_amount }}<br>
+        <strong>Payout:</strong> ${{ parlay.payout }}<br>
+        <strong>Result:</strong> {{ parlay.result }}
+        
+        <!-- Put legs in a separate container div -->
+        <div class="legs-section">
+          <strong>Legs:</strong>
+          <ul>
+            {% for link in parlay.props %}
+              <li>
+                {{ link.prop.player.name }} –
+                {{ link.prop.stat_type }}
+                {{ link.prop.over_under }} {{ link.prop.line }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Button group for Delete + Edit -->
+        <div class="button-group">
+          <form action="/delete_parlay/{{ parlay.id }}" method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this parlay?');">
+            <button type="submit">❌ Delete</button>
+          </form>
+
+          <form action="/update_parlay/{{ parlay.id }}" method="GET">
+            <button type="submit">✏️ Edit</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>
+

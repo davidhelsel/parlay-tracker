@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Create Prop</title>
+  <style>
+    /* Top heading style */
+    h1 {
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    /* Container for the nav links at the top */
+    .nav-links {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* Style each link as a "button" */
+    .nav-links a {
+      display: inline-block;
+      background-color: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      margin: 4px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .nav-links a:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Form styling */
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="number"], 
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+      transition: background-color 0.2s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create New Prop</h1>
+
+  <!-- Navigation links -->
+  <div class="nav-links">
+    <a href="/">View All Parlays</a>
+    <a href="/create_parlay">+ Create New Parlay</a>
+    <a href="/create_player">+ Add Player</a>
+    <a href="/select_parlay_to_update">✏️ Edit a Parlay</a>
+  </div>
+
+  <form method="POST">
+    <label>Player:</label>
+    <select name="player_id">
+      {% for player in players %}
+        <option value="{{ player.id }}">{{ player.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Stat Type:</label>
+    <select name="stat_type">
+      <option value="points">Points</option>
+      <option value="rebounds">Rebounds</option>
+      <option value="assists">Assists</option>
+      <option value="steals">Steals</option>
+      <option value="blocks">Blocks</option>
+      <option value="p+r+a">P + R + A</option>
+      <option value="p+r">P + R</option>
+      <option value="p+a">P + A</option>
+      <option value="r+a">R + A</option>
+      <option value="s+b">S + B</option>
+    </select>
+
+    <label>Line:</label>
+    <input type="number" name="line" step="0.1" placeholder="e.g. 25.5">
+
+    <label>Over or Under:</label>
+    <select name="over_under">
+      <option value="over">Over</option>
+      <option value="under">Under</option>
+    </select>
+
+    <input type="submit" value="Create Prop">
+  </form>
+
+</body>
+</html>
+
